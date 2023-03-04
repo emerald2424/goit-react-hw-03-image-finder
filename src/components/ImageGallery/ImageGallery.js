@@ -22,6 +22,10 @@ export class ImageGallery extends Component {
       prevState.page !== this.state.page
     ) {
         this.setState({ status: 'pending' });
+
+        if (prevProps.query !== this.props.query) {
+          this.setState({page: 1})
+        }
         
         getImages(this.props.query, this.state.page)
         .then(data => {
@@ -35,7 +39,8 @@ export class ImageGallery extends Component {
           console.log('Error: ', error);
           this.setState({error, status: 'rejected' });
         });
-      }
+    }
+
   }
   
   loadMore = () => {
@@ -56,6 +61,7 @@ export class ImageGallery extends Component {
             </li>
           ))}
         </ul>
+        {console.log(this.state.page)}
         {totalImages > 12 && Math.ceil(totalImages / 12) > page && <Button onClick={this.loadMore}/>}
       </>
     );
