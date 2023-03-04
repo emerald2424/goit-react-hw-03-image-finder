@@ -14,62 +14,67 @@ export class ImageGallery extends Component {
     status: 'idle',
     page: 1,
   };
-   
-  
-  componentDidUpdate(prevProps, prevState) {
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
     if (
       prevProps.query !== this.props.query ||
       prevState.page !== this.state.page
     ) {
-        this.setState({ status: 'pending' });
+      this.setState({ status: 'pending' });
 
-        if (prevProps.query !== this.props.query) {
-          this.setState({page: 1})
-        }
-        
-        getImages(this.props.query, this.state.page)
+      if (prevProps.query !== this.props.query) {
+        this.setState({
+          page: 1,
+          images: [],
+        });
+      }
+
+      getImages(this.props.query, this.state.page)
         .then(data => {
-            this.setState({
-              images: [...this.state.images, ...data.hits],
-              totalImages: data.totalHits,
-              status: 'resolved',
-            });
+          this.setState({
+            images: [...this.state.images, ...data.hits],
+            totalImages: data.totalHits,
+            status: 'resolved',
+          });
         })
         .catch(error => {
           console.log('Error: ', error);
-          this.setState({error, status: 'rejected' });
+          this.setState({ error, status: 'rejected' });
         });
+      console.log(snapshot);
     }
-
   }
-  
+
   loadMore = () => {
     this.setState(prevState => ({ page: prevState.page + 1 }));
-  }
+  };
 
   render() {
     const { images, totalImages, status, page } = this.state;
-    
-    if (status === 'pending') return <Loader/>
-    
-    if (status === 'resolved') return (
-      <>
-        <ul className={css.ImageGallery}>
-          {images.map(image => (
-            <li key={image.id} className={css.ImageGalleryItem}>
-              <ImageGalleryItem image={image} />
-            </li>
-          ))}
-        </ul>
-        {totalImages > 12 && Math.ceil(totalImages / 12) > page && <Button onClick={this.loadMore}/>}
-      </>
-    );
 
-    if (status === 'rejected') return <p>Sorry, we couldn't complete your request</p>
+    if (status === 'pending') return <Loader />;
+
+    if (status === 'resolved')
+      return (
+        <>
+          <ul className={css.ImageGallery}>
+            {images.map(image => (
+              <li key={image.id} className={css.ImageGalleryItem}>
+                <ImageGalleryItem image={image} />
+              </li>
+            ))}
+          </ul>
+          {totalImages > 12 && Math.ceil(totalImages / 12) > page && (
+            <Button onClick={this.loadMore} />
+          )}
+        </>
+      );
+
+    if (status === 'rejected')
+      return <p>Sorry, we couldn't complete your request</p>;
   }
 }
 
-
 ImageGallery.propTypes = {
-  query: PropTypes.string.isRequired
-}
+  query: PropTypes.string.isRequired,
+};
