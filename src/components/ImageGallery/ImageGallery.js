@@ -15,7 +15,7 @@ export class ImageGallery extends Component {
     page: 1,
   };
 
-  componentDidUpdate(prevProps, prevState, snapshot) {
+  componentDidUpdate(prevProps, prevState) {
     if (
       prevProps.query !== this.props.query ||
       prevState.page !== this.state.page
@@ -41,7 +41,6 @@ export class ImageGallery extends Component {
           console.log('Error: ', error);
           this.setState({ error, status: 'rejected' });
         });
-      console.log(snapshot);
     }
   }
 
