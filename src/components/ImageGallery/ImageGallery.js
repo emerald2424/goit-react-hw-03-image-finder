@@ -61,7 +61,6 @@ export class ImageGallery extends Component {
             </li>
           ))}
         </ul>
-        {console.log(this.state.page)}
         {totalImages > 12 && Math.ceil(totalImages / 12) > page && <Button onClick={this.loadMore}/>}
       </>
     );
